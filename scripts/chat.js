@@ -28,8 +28,34 @@ class Chatroom {
     return response;
   }
 
+  //real time listener
+  getChats(callback) {
+    this.chats
+      //complex query 
+      .where('room', '==', this.room)
+      .onSnapshot(snapshot => {
+        //docChanges - get an array of all changes
+        snapshot.docChanges().forEach(change => {
+          if (change.type === 'added') {
+            //update the ui
+            callback(change.doc.data());
+          }
+        });
+      });
+  }
+
 }
 
 const chatroom = new Chatroom('gaming', 'jeremy');
 
-console.log(chatroom);
+chatroom.getChats((data) => {
+  console.log(data);
+});
+
+// chatroom.addChat('hello everyone')
+//   .then(() => {
+//     console.log('chat added')
+//   })
+//   .catch(err => console.log(err));
+
+// console.log(chatroom);
